@@ -72,30 +72,37 @@ defmodule GameBoard do
   def draw(free_set, x_set, y_set) do
     draw_set = set_union(free_set, x_set, y_set)
 
-    create_board_string(draw_set)
+    create_board_string(draw_set, "")
   end
 
-  defp create_board_string(draw_set) do 
-    board_string = ""
-    last_value = Enum.at(draw_set, MapSet.size(draw_set) - 1)
-    Enum.each(draw_set, fn {num, character} -> 
+  defp create_board_string(draw_set, board_string) do 
+    new_board_string = board_string
+    if MapSet.size(draw_set) == 0 do
+      IO.puts("Board String: #{board_string}")
+      board_string
+    else
+      {num, character} = Enum.at(draw_set, 0)
+      IO.puts("num: #{num}")
+      IO.puts("character: #{character}")
       value = !character && num || character
+      IO.puts("value: #{value}")
       if rem(num, 3) != 0 do
-        board_string = board_string <> "#{value}" <> "|"
-      IO.puts("board_string 1: #{board_string}")
+        new_board_string = board_string <> "#{value}" <> "|"
+        IO.puts("Board 1: #{board_string}")
       else
-        if num == last_value do 
-          board_string = board_string <> "#{value}"
-          IO.puts("board_string 2: #{board_string}")
+        if MapSet.size(draw_set) == 1 do 
+          new_board_string = board_string <> "#{value}"
+          IO.puts("Board 3: #{board_string}")
         else
-          board_string = board_string <> "#{value}" <> "\n" <> "___" <> "\n"
-          IO.puts("board_string 3: #{board_string}")
+          new_board_string = board_string <> "#{value}" <> "\n" <> "___" <> "\n"
+          IO.puts("Board 2: #{board_string}")
         end
       end
-    end)
-
-    IO.puts("Board String: #{board_string}")
-    board_string
+      IO.puts("Draw Set: #{MapSet.size(draw_set)}")
+      IO.puts("Board 4: #{new_board_string}")
+      draw_set = MapSet.delete(draw_set, {num, character})
+      create_board_string(draw_set, new_board_string)
+    end 
   end
 
   defp set_union(free_set, x_set, y_set) do
