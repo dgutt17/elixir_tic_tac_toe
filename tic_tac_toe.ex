@@ -78,35 +78,25 @@ defmodule GameBoard do
   defp create_board_string(draw_set, board_string) do 
     new_board_string = board_string
     if MapSet.size(draw_set) == 0 do
-      IO.puts("Board String: #{board_string}")
       board_string
     else
       {num, character} = Enum.at(draw_set, 0)
-      IO.puts("num: #{num}")
-      IO.puts("character: #{character}")
+      draw_set = MapSet.delete(draw_set, {num, character})
       value = !character && num || character
-      IO.puts("value: #{value}")
       if rem(num, 3) != 0 do
         new_board_string = board_string <> "#{value}" <> "|"
-        IO.puts("Board 1: #{board_string}")
+        create_board_string(draw_set, new_board_string)
       else
         if MapSet.size(draw_set) == 1 do 
           new_board_string = board_string <> "#{value}"
           IO.puts("Board 3: #{board_string}")
+          create_board_string(draw_set, new_board_string)
         else
           new_board_string = board_string <> "#{value}" <> "\n" <> "___" <> "\n"
-          IO.puts("Board 2: #{board_string}")
+          create_board_string(draw_set, new_board_string)
         end
       end
-      IO.puts("Draw Set: #{MapSet.size(draw_set)}")
-      IO.puts("Board 4: #{new_board_string}")
-      draw_set = MapSet.delete(draw_set, {num, character})
-      create_board_string(draw_set, new_board_string)
-    end 
-  end
-
-  defp test_function() do
-    
+    end
   end
 
   defp set_union(free_set, x_set, y_set) do
