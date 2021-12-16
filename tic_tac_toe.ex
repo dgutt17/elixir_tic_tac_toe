@@ -2,24 +2,26 @@ defmodule GameEngine do
   def initiate do
     player_1 = IO.gets('First player type your name: ')
     player_2 = IO.gets('Second player type your name: ')
-    run(player_1, player_2)
-  end
-
-  def run(player_1, player_2) do
     # set up process to store state
     state_pid = GameState.new(player_1, player_2)
+    run(state_pid)
+  end
+
+  def run(state_pid) do
     current_state = GameState.get(state_pid)
     free_set = current_state[:free]
     x_set = current_state[:x]
     y_set = current_state[:y]
     # Draw board
-    GameBoard.draw(free_set, x_set, y_set)
-
+    IO.puts(GameBoard.draw(free_set, x_set, y_set))
     # First player picks
+    player_1_square = IO.gets("#{current_state[:player_1]} pick your square: ")
+    IO.puts("Player 1 number picked: #{player_1_square}")
     # Second Player picks
     # check if anyone won
     # if end state reached -> restart game
     # else repeat
+    run(state_pid)
   end
 end
 
@@ -38,7 +40,7 @@ defmodule GameState do
     %{ 
       :free => MapSet.new([{1,nil},{2,nil},{3,nil},{4,nil},{5,nil},{6,nil},{7,nil},{8,nil},{9,nil}]),
       :x => MapSet.new,
-      :o => MapSet.new,
+      :y => MapSet.new,
       :player_1 => player_1,
       :player_2 => player_2
     }
@@ -67,42 +69,38 @@ defmodule GameState do
 end
 
 defmodule GameBoard do
-  defp draw(free_set, x_set, y_set)
+  def draw(free_set, x_set, y_set) do
     draw_set = set_union(free_set, x_set, y_set)
 
     create_board_string(draw_set)
   end
 
-  defp board_string(str \\ "_|_|_\n", times, new_str \\ '') do 
-    if times != 0 do
-      run(str, times - 1, "#{new_str}#{str}")
-    else
-      new_str
-    end
-  end
-
   defp create_board_string(draw_set) do 
     board_string = ""
-    last_value = Enum.at(draw_set, draw_set.size - 1)
+    last_value = Enum.at(draw_set, MapSet.size(draw_set) - 1)
     Enum.each(draw_set, fn {num, character} -> 
       value = !character && num || character
-      if num % 3 != 0 do
+      if rem(num, 3) != 0 do
         board_string = board_string <> "#{value}" <> "|"
+      IO.puts("board_string 1: #{board_string}")
       else
         if num == last_value do 
           board_string = board_string <> "#{value}"
+          IO.puts("board_string 2: #{board_string}")
         else
           board_string = board_string <> "#{value}" <> "\n" <> "___" <> "\n"
+          IO.puts("board_string 3: #{board_string}")
         end
       end
-    )
+    end)
 
+    IO.puts("Board String: #{board_string}")
     board_string
   end
 
-  defp set_union(free_set, x_set, y_set)
-    MapSet.union(y_set, MapSet.union(free_set, x_set))
+  defp set_union(free_set, x_set, y_set) do
+    MapSet.union(MapSet.union(free_set, x_set), y_set)
   end
 end
 
-GameEngine.initiate
+GameEngine.initiate()
