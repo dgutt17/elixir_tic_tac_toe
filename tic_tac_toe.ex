@@ -7,8 +7,13 @@ defmodule GameEngine do
 
   def run(player_1, player_2) do
     # set up process to store state
+    state_pid = GameState.new(player_1, player_2)
+    current_state = GameState.get(state_pid)
+    free_set = current_state[:free]
+    x_set = current_state[:x]
+    y_set = current_state[:y]
     # Draw board
-    GameBoard.draw
+    GameBoard.draw(free_set, x_set, y_set)
 
     # First player picks
     # Second Player picks
@@ -25,15 +30,17 @@ defmodule GameState do
   # Free store like this: {1, nil}
   # x store like this: {1, :x}
   # y store like this: {1, :y}
-  def new do 
-    spawn fn -> loop(initial_state()) end
+  def new(player_1, player_2) do 
+    spawn fn -> loop(initial_state(player_1, player_2)) end
   end
 
-  def initial_state do 
+  def initial_state(player_1, player_2) do 
     %{ 
       :free => MapSet.new([{1,nil},{2,nil},{3,nil},{4,nil},{5,nil},{6,nil},{7,nil},{8,nil},{9,nil}]),
       :x => MapSet.new,
-      :o => MapSet.new 
+      :o => MapSet.new,
+      :player_1 => player_1,
+      :player_2 => player_2
     }
   end
 
@@ -60,12 +67,41 @@ defmodule GameState do
 end
 
 defmodule GameBoard do
-  def draw(str \\ "_|_|_\n", times, new_str \\ '') do 
+  defp draw(free_set, x_set, y_set)
+    draw_set = set_union(free_set, x_set, y_set)
+
+    create_board_string(draw_set)
+  end
+
+  defp board_string(str \\ "_|_|_\n", times, new_str \\ '') do 
     if times != 0 do
       run(str, times - 1, "#{new_str}#{str}")
     else
       new_str
     end
+  end
+
+  defp create_board_string(draw_set) do 
+    board_string = ""
+    last_value = Enum.at(draw_set, draw_set.size - 1)
+    Enum.each(draw_set, fn {num, character} -> 
+      value = !character && num || character
+      if num % 3 != 0 do
+        board_string = board_string <> "#{value}" <> "|"
+      else
+        if num == last_value do 
+          board_string = board_string <> "#{value}"
+        else
+          board_string = board_string <> "#{value}" <> "\n" <> "___" <> "\n"
+        end
+      end
+    )
+
+    board_string
+  end
+
+  defp set_union(free_set, x_set, y_set)
+    MapSet.union(y_set, MapSet.union(free_set, x_set))
   end
 end
 
