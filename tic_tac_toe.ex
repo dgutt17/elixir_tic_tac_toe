@@ -105,6 +105,10 @@ defmodule GameBoard do
     end 
   end
 
+  defp test_function() do
+    
+  end
+
   defp set_union(free_set, x_set, y_set) do
     MapSet.union(MapSet.union(free_set, x_set), y_set)
   end
