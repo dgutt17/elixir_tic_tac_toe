@@ -69,6 +69,7 @@ defmodule GameState do
 end
 
 defmodule GameBoard do
+  @final_square_number 9
   def draw(free_set, x_set, y_set) do
     draw_set = set_union(free_set, x_set, y_set)
 
@@ -87,12 +88,11 @@ defmodule GameBoard do
         new_board_string = board_string <> "#{value}" <> "|"
         create_board_string(draw_set, new_board_string)
       else
-        if MapSet.size(draw_set) == 1 do 
+        if num == final_square_number do 
           new_board_string = board_string <> "#{value}"
-          IO.puts("Board 3: #{board_string}")
           create_board_string(draw_set, new_board_string)
         else
-          new_board_string = board_string <> "#{value}" <> "\n" <> "___" <> "\n"
+          new_board_string = board_string <> "#{value}" <> "\n"
           create_board_string(draw_set, new_board_string)
         end
       end
@@ -101,6 +101,10 @@ defmodule GameBoard do
 
   defp set_union(free_set, x_set, y_set) do
     MapSet.union(MapSet.union(free_set, x_set), y_set)
+  end
+
+  defp final_square_number do
+    @final_square_number
   end
 end
 
