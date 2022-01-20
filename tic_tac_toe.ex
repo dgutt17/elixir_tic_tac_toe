@@ -77,37 +77,13 @@ defmodule GameBoard do
     create_board_string(draw_set, "")
   end
 
-  # defp create_board_string(draw_set, board_string) do 
-  #   new_board_string = board_string
-  #   if MapSet.size(draw_set) == 0 do
-  #     board_string
-  #   else
-  #     {num, character} = Enum.at(draw_set, 0)
-  #     draw_set = MapSet.delete(draw_set, {num, character})
-  #     value = !character && num || character
-  #     if rem(num, 3) != 0 do
-  #       new_board_string = board_string <> "#{value}" <> "|"
-  #       create_board_string(draw_set, new_board_string)
-  #     else
-  #       if num == final_square_number do 
-  #         new_board_string = board_string <> "#{value}"
-  #         create_board_string(draw_set, new_board_string)
-  #       else
-  #         new_board_string = board_string <> "#{value}" <> "\n"
-  #         create_board_string(draw_set, new_board_string)
-  #       end
-  #     end
-  #   end
-  # end
-
   defp create_board_string(draw_set, board_string) do 
-    new_board_string = board_string
     if MapSet.size(draw_set) == 0 do
-      board_string
+      board_string <> boundary_line <> "\n"
     else
       set = Enum.at(draw_set, 0)
       draw_set = MapSet.delete(draw_set, set)
-      new_board_string = (set)
+      new_board_string = board_string <> create_row(set)
       create_board_string(draw_set, new_board_string)
     end
   end
@@ -144,7 +120,7 @@ defmodule GameBoard do
 
   defp create_row(set, middle_line \\ "") do 
     if MapSet.size(set) == 0 do
-      boundary_line <> "\n" <> middle_line <> "\n" <> boundary_line <> "\n"
+      boundary_line <> "\n" <> middle_line <> "|" <> "\n"
     else
       { num, character } = Enum.at(set, 0)
       set = MapSet.delete(set, { num, character })
@@ -158,7 +134,7 @@ defmodule GameBoard do
   end
 
   defp create_middle_line(num) do 
-    "| #{num} |"
+    "| #{num} "
   end
 end
 
