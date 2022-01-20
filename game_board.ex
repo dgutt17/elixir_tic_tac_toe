@@ -1,5 +1,4 @@
 defmodule GameBoard do
-  @final_square_number 9
   def draw(free_set, x_set, o_set) do
     draw_set = set_union(free_set, x_set, o_set)
     draw_set = chunked_draw_set(draw_set)
@@ -7,25 +6,10 @@ defmodule GameBoard do
     create_board_string(draw_set, "")
   end
 
-  defp create_board_string(draw_set, board_string) do 
-    if MapSet.size(draw_set) == 0 do
-      board_string <> boundary_line <> "\n"
-    else
-      set = Enum.at(draw_set, 0)
-      draw_set = MapSet.delete(draw_set, set)
-      new_board_string = board_string <> create_row(set)
-      create_board_string(draw_set, new_board_string)
-    end
-  end
-
   defp set_union(free_set, x_set, o_set) do
     MapSet.union(MapSet.union(free_set, x_set), o_set)
   end
-
-  defp final_square_number do
-    @final_square_number
-  end
-
+  
   defp chunked_draw_set(draw_set) do
     chunked_draw_set_helper(draw_set, MapSet.new([]))
   end
@@ -45,6 +29,17 @@ defmodule GameBoard do
       end
     else
       draw_set
+    end
+  end
+
+  defp create_board_string(draw_set, board_string) do 
+    if MapSet.size(draw_set) == 0 do
+      board_string <> boundary_line <> "\n"
+    else
+      set = Enum.at(draw_set, 0)
+      draw_set = MapSet.delete(draw_set, set)
+      new_board_string = board_string <> create_row(set)
+      create_board_string(draw_set, new_board_string)
     end
   end
 
