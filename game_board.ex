@@ -49,7 +49,8 @@ defmodule GameBoard do
     else
       { num, character } = Enum.at(set, 0)
       set = MapSet.delete(set, { num, character })
-      middle_line = middle_line <> create_middle_line(num)
+      new_middle_line = if character == nil, do: create_middle_line(num), else: create_middle_line(character)
+      middle_line = middle_line <> new_middle_line
       create_row(set, middle_line)
     end
   end
