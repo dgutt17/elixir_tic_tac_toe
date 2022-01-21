@@ -16,27 +16,22 @@ defmodule GameEngine do
     x_set = current_state[:x]
     o_set = current_state[:o]
 
+    # Player 1
     IO.puts(GameBoard.draw(free_set, x_set, o_set))
-
     player_1_square = IO.gets("#{current_state[:player_1]} pick your square: ")
     player_1_square = elem(Integer.parse(player_1_square), 0)
     x_set = MapSet.put(x_set, {player_1_square, "X"})
     free_set = MapSet.delete(free_set, {player_1_square, nil})
 
+    # Player 2
     IO.puts(GameBoard.draw(free_set, x_set, o_set))
-
     player_2_square = IO.gets("#{current_state[:player_2]} pick your square: ")
     player_2_square = elem(Integer.parse(player_2_square), 0)
     o_set = MapSet.put(o_set, {player_2_square, "O"})
     free_set = MapSet.delete(free_set, {player_2_square, nil})
-    new_state = %{
-      :free => free_set,
-      :x => x_set,
-      :o => o_set,
-      :player_1 => current_state[:player_1],
-      :player_2 => current_state[:player_2]
-    }
-    set_state(state_pid, new_state)
+
+    # Set State
+    set_state(state_pid, new_state(free_set, x_set, o_set, current_state))
     # check if anyone won
     # if end state reached -> restart game
     # else repeat
@@ -49,6 +44,16 @@ defmodule GameEngine do
 
   defp set_state(state_pid, state) do 
     GameState.set(state_pid, state)
+  end
+
+  defp new_state(free_set, x_set, o_set, current_state) do 
+    %{
+      :free => free_set,
+      :x => x_set,
+      :o => o_set,
+      :player_1 => current_state[:player_1],
+      :player_2 => current_state[:player_2]
+    }
   end
 end
 
