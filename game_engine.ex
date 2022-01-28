@@ -22,6 +22,11 @@ defmodule GameEngine do
     player_1_square = elem(Integer.parse(player_1_square), 0)
     x_set = MapSet.put(x_set, {player_1_square, "X"})
     free_set = MapSet.delete(free_set, {player_1_square, nil})
+    # Check if Player 1 has won
+    if GameLogic.game_end_state?(free_set, x_set) do
+      IO.puts("#{current_state[:player_1]} HAS WON THE GAME HOORAY!!!")
+      System.halt(0)
+    end
 
     # Player 2
     IO.puts(GameBoard.draw(free_set, x_set, o_set))
@@ -29,12 +34,16 @@ defmodule GameEngine do
     player_2_square = elem(Integer.parse(player_2_square), 0)
     o_set = MapSet.put(o_set, {player_2_square, "O"})
     free_set = MapSet.delete(free_set, {player_2_square, nil})
+    # Check player 2 has won
+    if GameLogic.game_end_state?(free_set, o_set) do
+      IO.puts("#{current_state[:player_2]} HAS WON THE GAME HOORAY!!!")
+      System.halt(0)
+    end
 
-    # Set State
+    # Set state
     set_state(state_pid, new_state(free_set, x_set, o_set, current_state))
-    # check if anyone won
-    # if end state reached -> restart game
-    # else repeat
+
+    # Recurse
     run(state_pid)
   end
 
