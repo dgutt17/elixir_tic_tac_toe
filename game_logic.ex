@@ -7,31 +7,26 @@ defmodule GameLogic do
     # tie(free_set)
   end
 
-  defp horizontal_win(player_set, index, row_found) do
-    IO.puts("In horizontal win")
-    tuple1 = Enum.at(player_set, index)
-    IO.puts("step 2")
-    tuple2 = Enum.at(player_set, index + 1)
-    IO.puts("step 3")
-    # if rem(num1, 3) == 1 && num1 + 1 == num2 do 
-    # IO.puts("step 4")
-    #   horizontal_win(player_set, index + 1, true)
-    # else
-    #     IO.puts("step 5")
-    #   if row_found && num1 + 1 == num2 do
-    #       IO.puts("step 6")
-    #     true
-    #   else
-    #         IO.puts("step 7")
-    #     if index == MapSet.size(player_set) - 1 do
-    #         IO.puts("step 8")
-    #       false
-    #     else
-    #         IO.puts("step 9")
-    #       horizontal_win(player_set, index + 1, false)
-    #     end
-    #   end
-    # end
+  defp horizontal_win(player_set, index, row_length) do 
+    if MapSet.size(player_set) == 0 do
+      false
+    else
+      {num, char} = Enum.at(player_set, index)
+      {num2, char2} = Enum.at(player_set, index - 1)
+
+      cond do
+        row_length == 2 -> 
+          true
+        index == MapSet.size(player_set) - 1 -> 
+          false
+        rem(num, 3) == 1 ->
+          horizontal_win(player_set, index + 1, 1)
+        num - 1 == num2 ->
+          horizontal_win(player_set, index + 1, row_length + 1)
+        true -> 
+          horizontal_win(player_set, index + 1, 0)
+      end
+    end
   end
 
   defp vertical_win(player_set) do 
