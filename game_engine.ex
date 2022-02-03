@@ -23,7 +23,7 @@ defmodule GameEngine do
     x_set = MapSet.put(x_set, {player_1_square, "X"})
     free_set = MapSet.delete(free_set, {player_1_square, nil})
     # Check if Player 1 has won
-    if GameLogic.game_end_state?(free_set, x_set) do
+    if GameLogic.won_the_game?(x_set) do
       IO.puts("#{current_state[:player_1]} HAS WON THE GAME HOORAY!!!")
       System.halt(0)
     end
@@ -35,8 +35,13 @@ defmodule GameEngine do
     o_set = MapSet.put(o_set, {player_2_square, "O"})
     free_set = MapSet.delete(free_set, {player_2_square, nil})
     # Check player 2 has won
-    if GameLogic.game_end_state?(free_set, o_set) do
+    if GameLogic.won_the_game?(o_set) do
       IO.puts("#{current_state[:player_2]} HAS WON THE GAME HOORAY!!!")
+      System.halt(0)
+    end
+
+    if GameLogic.tie?(free_set) do
+      IO.puts("CATS GAME....You guys suck!")
       System.halt(0)
     end
 

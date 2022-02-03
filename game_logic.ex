@@ -1,10 +1,12 @@
 defmodule GameLogic do
-  def game_end_state?(free_set, player_set) do 
-    horizontal_win(player_set, 0, false)
-    # vertical_win(player_set)
-    # diagonal_win_1(player_set)
-    # diagonal_win_2(player_set)
-    # tie(free_set)
+  def won_the_game?(player_set) do 
+    IO.inspect(player_set)
+    {num, char} = Enum.at(player_set, 0)
+    horizontal_win(player_set, 0, 0) || vertical_win(player_set, 0) || diagonal_win(player_set, char)
+  end
+
+  def tie?(free_set) do 
+    MapSet.size(free_set) == 0
   end
 
   defp horizontal_win(player_set, index, row_length) do 
@@ -16,6 +18,7 @@ defmodule GameLogic do
 
       cond do
         row_length == 2 -> 
+        IO.puts("Horizontal")
           true
         index == MapSet.size(player_set) - 1 -> 
           false
@@ -29,15 +32,45 @@ defmodule GameLogic do
     end
   end
 
-  defp vertical_win(player_set) do 
+  defp vertical_win(player_set, index) do 
+    if MapSet.size(player_set) == 0 do
+      false
+    else
+      {num, char} = Enum.at(player_set, index)
+      cond do 
+        index == MapSet.size(player_set) - 1 -> 
+          false
+        num > 3 -> 
+          false
+        correct_column_length?(player_set, num, char, 1) ->
+          IO.puts("Vertical")
+          true
+        true -> 
+          vertical_win(player_set, index + 1)
+      end
+    end
   end
 
-  defp diagonal_win_1(player_set) do
+  defp correct_column_length?(player_set, num, char, column_length) do
+    cond do 
+      column_length == 3 -> 
+        true
+      MapSet.member?(player_set, {num + 3, char}) ->
+        correct_column_length?(player_set, num + 3, char, column_length + 1)
+      true -> 
+        false
+    end
   end
 
-  defp diagonal_win_2(player_set) do
-  end
-
-  defp tie(free_set) do 
+  defp diagonal_win(player_set, char) do
+    tuple_1 = MapSet.member?(player_set, {1, char})
+    tuple_3 = MapSet.member?(player_set, {3, char})
+    tuple_5 = MapSet.member?(player_set, {5, char})
+    tuple_7 = MapSet.member?(player_set, {7, char})
+    tuple_9 = MapSet.member?(player_set, {9, char})
+    IO.puts("Diagnol")
+    IO.puts("tuple_1 && tuple_5 && tuple_9: #{tuple_1 && tuple_5 && tuple_9}")
+    IO.puts("tuple_3 && tuple_5 && tuple_7: #{tuple_3 && tuple_5 && tuple_7}")
+    (tuple_1 && tuple_5 && tuple_9) || (tuple_3 && tuple_5 && tuple_7)
   end
 end
