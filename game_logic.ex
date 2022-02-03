@@ -18,7 +18,6 @@ defmodule GameLogic do
 
       cond do
         row_length == 2 -> 
-        IO.puts("Horizontal")
           true
         index == MapSet.size(player_set) - 1 -> 
           false
@@ -43,7 +42,6 @@ defmodule GameLogic do
         num > 3 -> 
           false
         correct_column_length?(player_set, num, char, 1) ->
-          IO.puts("Vertical")
           true
         true -> 
           vertical_win(player_set, index + 1)
@@ -68,9 +66,7 @@ defmodule GameLogic do
     tuple_5 = MapSet.member?(player_set, {5, char})
     tuple_7 = MapSet.member?(player_set, {7, char})
     tuple_9 = MapSet.member?(player_set, {9, char})
-    IO.puts("Diagnol")
-    IO.puts("tuple_1 && tuple_5 && tuple_9: #{tuple_1 && tuple_5 && tuple_9}")
-    IO.puts("tuple_3 && tuple_5 && tuple_7: #{tuple_3 && tuple_5 && tuple_7}")
+    
     (tuple_1 && tuple_5 && tuple_9) || (tuple_3 && tuple_5 && tuple_7)
   end
 end
