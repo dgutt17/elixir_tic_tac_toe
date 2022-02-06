@@ -28,6 +28,11 @@ defmodule GameEngine do
       System.halt(0)
     end
 
+    if GameLogic.tie?(free_set) do
+      IO.puts("CATS GAME....You guys suck!")
+      System.halt(0)
+    end
+
     # Player 2
     IO.puts(GameBoard.draw(free_set, x_set, o_set))
     player_2_square = IO.gets("#{current_state[:player_2]} pick your square: ")
