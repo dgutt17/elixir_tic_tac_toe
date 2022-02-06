@@ -1,6 +1,5 @@
 defmodule GameLogic do
   def won_the_game?(player_set) do 
-    IO.inspect(player_set)
     {num, char} = Enum.at(player_set, 0)
     horizontal_win(player_set, 0) || vertical_win(player_set, 0) || diagonal_win(player_set, char)
   end
@@ -14,14 +13,12 @@ defmodule GameLogic do
       false
     else
       {num, char} = Enum.at(player_set, index)
-      {num2, char2} = Enum.at(player_set, index - 1)
-
       cond do
         index == MapSet.size(player_set) - 1 -> 
           false
         rem(num, 3) != 1 ->
           false
-        correct_row_length?(player_set, num, char, 1)  
+        correct_row_length?(player_set, num, char, 1) ->
           true
         true -> 
           horizontal_win(player_set, index + 1)
@@ -75,9 +72,7 @@ defmodule GameLogic do
     tuple_5 = MapSet.member?(player_set, {5, char})
     tuple_7 = MapSet.member?(player_set, {7, char})
     tuple_9 = MapSet.member?(player_set, {9, char})
-    IO.puts("Diagnol")
-    IO.puts("tuple_1 && tuple_5 && tuple_9: #{tuple_1 && tuple_5 && tuple_9}")
-    IO.puts("tuple_3 && tuple_5 && tuple_7: #{tuple_3 && tuple_5 && tuple_7}")
+    
     (tuple_1 && tuple_5 && tuple_9) || (tuple_3 && tuple_5 && tuple_7)
   end
 end
