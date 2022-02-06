@@ -43,7 +43,7 @@ defmodule GameEngine do
     free_set = MapSet.delete(free_set, {player_2_square, nil})
     set_state(state_pid, new_state(free_set, x_set, o_set, current_state))
 
-    won_the_game?(o_set, current_state[:player_2]
+    won_the_game?(o_set, current_state[:player_2])
 
     tie_game?(free_set)
 
