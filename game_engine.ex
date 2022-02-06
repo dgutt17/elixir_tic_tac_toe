@@ -10,33 +10,54 @@ defmodule GameEngine do
     run(state_pid)
   end
 
-  def run(state_pid) do
+  def run(state_pid, skip_player_1? \\ false) do
     current_state = get_state(state_pid)
     free_set = current_state[:free]
     x_set = current_state[:x]
     o_set = current_state[:o]
 
     # Player 1
-    IO.puts(GameBoard.draw(free_set, x_set, o_set))
-    player_1_square = IO.gets("#{current_state[:player_1]} pick your square: ")
-    player_1_square = elem(Integer.parse(player_1_square), 0)
-    x_set = MapSet.put(x_set, {player_1_square, "X"})
-    free_set = MapSet.delete(free_set, {player_1_square, nil})
-    # Check if Player 1 has won
-    if GameLogic.won_the_game?(x_set) do
-      IO.puts("#{current_state[:player_1]} HAS WON THE GAME HOORAY!!!")
-      System.halt(0)
-    end
+    IO.puts("skip_player_1?: #{skip_player_1?}")
+    unless skip_player_1? do
+      IO.puts("STEP 1")
+      IO.puts(GameBoard.draw(free_set, x_set, o_set))
+      IO.puts("STEP 2")
+      player_1_square = IO.gets("#{current_state[:player_1]} pick your square: ")
+      IO.puts("STEP 3")
+      player_1_square = elem(Integer.parse(player_1_square), 0)
+      IO.puts("STEP 4")
+      if !MapSet.member?(free_set, {player_1_square, nil}) do 
+        IO.puts("STEP 5")
+        run(state_pid)
+      end
+      IO.puts("STEP 6")
+      x_set = MapSet.put(x_set, {player_1_square, "X"})
+      IO.puts("STEP 7")
+      free_set = MapSet.delete(free_set, {player_1_square, nil})
+      IO.puts("STEP 8")
+      # Check if Player 1 has won
+      if GameLogic.won_the_game?(x_set) do
+          IO.puts("STEP 9")
+        IO.puts("#{current_state[:player_1]} HAS WON THE GAME HOORAY!!!")
+        IO.puts("STEP 10")
+        System.halt(0)
+      end
 
-    if GameLogic.tie?(free_set) do
-      IO.puts("CATS GAME....You guys suck!")
-      System.halt(0)
+      if GameLogic.tie?(free_set) do
+        IO.puts("CATS GAME....You guys suck!")
+        System.halt(0)
+      end
     end
 
     # Player 2
+    IO.puts("STEP 11")
     IO.puts(GameBoard.draw(free_set, x_set, o_set))
+    IO.puts("STEP 12")
     player_2_square = IO.gets("#{current_state[:player_2]} pick your square: ")
     player_2_square = elem(Integer.parse(player_2_square), 0)
+    if !MapSet.member?(free_set, {player_2_square, nil}) do 
+        run(state_pid, true)
+    end
     o_set = MapSet.put(o_set, {player_2_square, "O"})
     free_set = MapSet.delete(free_set, {player_2_square, nil})
     # Check player 2 has won
