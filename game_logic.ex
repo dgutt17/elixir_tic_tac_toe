@@ -2,14 +2,14 @@ defmodule GameLogic do
   def won_the_game?(player_set) do 
     IO.inspect(player_set)
     {num, char} = Enum.at(player_set, 0)
-    horizontal_win(player_set, 0, 0) || vertical_win(player_set, 0) || diagonal_win(player_set, char)
+    horizontal_win(player_set, 0) || vertical_win(player_set, 0) || diagonal_win(player_set, char)
   end
 
   def tie?(free_set) do 
     MapSet.size(free_set) == 0
   end
 
-  defp horizontal_win(player_set, index, row_length) do 
+  defp horizontal_win(player_set, index) do 
     if MapSet.size(player_set) == 0 do
       false
     else
@@ -17,18 +17,26 @@ defmodule GameLogic do
       {num2, char2} = Enum.at(player_set, index - 1)
 
       cond do
-        row_length == 2 -> 
-        IO.puts("Horizontal")
-          true
         index == MapSet.size(player_set) - 1 -> 
           false
-        rem(num, 3) == 1 ->
-          horizontal_win(player_set, index + 1, 1)
-        num - 1 == num2 ->
-          horizontal_win(player_set, index + 1, row_length + 1)
+        rem(num, 3) != 1 ->
+          false
+        correct_row_length?(player_set, num, char, 1)  
+          true
         true -> 
-          horizontal_win(player_set, index + 1, 0)
+          horizontal_win(player_set, index + 1)
       end
+    end
+  end
+
+  defp correct_row_length?(player_set, num, char, row_length) do 
+    cond do 
+      row_length == 3 -> 
+        true
+      MapSet.member?(player_set, {num + 1, char}) ->
+        correct_row_length?(player_set, num + 1, char, row_length + 1)
+      true ->
+        false
     end
   end
 
@@ -43,7 +51,6 @@ defmodule GameLogic do
         num > 3 -> 
           false
         correct_column_length?(player_set, num, char, 1) ->
-          IO.puts("Vertical")
           true
         true -> 
           vertical_win(player_set, index + 1)
